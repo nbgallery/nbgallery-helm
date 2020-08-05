@@ -1,0 +1,17 @@
+---
+# Source: nbgallery/charts/mysql/templates/tests/test-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nbgallery-mysql-test
+  namespace: nbgallery
+  labels:
+    app: nbgallery-mysql
+    chart: "mysql-1.6.6"
+    heritage: "Helm"
+    release: "nbgallery"
+data:
+  run.sh: |-
+    @test "Testing MySQL Connection" {
+      mysql --host=nbgallery-mysql --port=3306 -u root -pmuII3EqMlq
+    }

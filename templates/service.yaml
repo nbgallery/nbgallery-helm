@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nbgallery.fullname" . }}
+  labels:
+    {{- include "nbgallery.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: gallery
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "nbgallery.selectorLabels" . | nindent 4 }}

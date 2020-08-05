@@ -1,0 +1,20 @@
+---
+# Source: nbgallery/charts/solr/templates/service-headless.yaml
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "nbgallery-solr-headless"
+  labels:
+    app.kubernetes.io/name: solr
+    app.kubernetes.io/instance: nbgallery
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: solr-1.5.2
+spec:
+  clusterIP: "None"
+  ports:
+    - port: 8988
+      name: "solr-headless"
+  selector:
+    app.kubernetes.io/name: "solr"
+    app.kubernetes.io/instance: "nbgallery"
+    app.kubernetes.io/component: "server"

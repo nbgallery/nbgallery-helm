@@ -1,0 +1,71 @@
+---
+# Source: nbgallery/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nbgallery
+  labels:
+    helm.sh/chart: nbgallery-0.1.0
+    app.kubernetes.io/name: nbgallery
+    app.kubernetes.io/instance: nbgallery
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nbgallery
+      app.kubernetes.io/instance: nbgallery
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nbgallery
+        app.kubernetes.io/instance: nbgallery
+    spec:
+      serviceAccountName: nbgallery
+      securityContext:
+        {}
+      containers:
+        - name: nbgallery
+          securityContext:
+            {}
+          image: "nbgallery/nbgallery:latest"
+          imagePullPolicy: Always
+          env:
+            - name: RAILS_SERVE_STATIC_FILES
+              value: "true"
+            - name: GALLERY__MYSQL__HOST
+              value: nbgallery-mysql
+            - name: GALLERY__MYSQL__PORT
+              value: "3306"
+            - name: GALLERY__MYSQL__USERNAME
+              value: nbgallery
+            - name: GALLERY__MYSQL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: mysql-password
+            - name: GALLERY__MYSQL__DATABASE
+              value: gallery
+            - name: GALLERY__SOLR__HOSTNAME
+              value: nbgallery-solr-svc
+            - name: GALLERY__SOLR__PORT
+              value: "8988"
+            - name: EMAIL_DOMAIN
+              value: "nbgallery.udev.hogwarts.azure.chi"
+            - name: EMAIL_ADDRESS
+              value: "hogwarts-nbgallery@ops.cyber.gc.ca"
+            - name: EMAIL_DEFAULT_URL_OPTIONS_HOST
+              value: "nbgallery.udev.hogwarts.azure.chi"
+            - name: EMAIL_SERVER
+              value: "10.162.197.5"
+            - name: EMAIL_PORT
+              value: "25"
+            - name: GALLERY__EMAIL__GENERAL_FROM
+              value: "hogwarts-nbgallery@ops.cyber.gc.ca"
+          ports:
+            - name: gallery
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            {}

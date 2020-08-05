@@ -1,0 +1,10 @@
+---
+# Source: nbgallery/charts/mysql/templates/initializationFiles-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nbgallery-mysql-initialization
+  namespace: nbgallery
+data:
+  gallery-db.sql: |-
+    CREATE DATABASE IF NOT EXISTS gallery DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;

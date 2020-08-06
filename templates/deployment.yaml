@@ -30,6 +30,16 @@ spec:
           env:
             - name: RAILS_SERVE_STATIC_FILES
               value: "true"
+            - name: GALLERY__DIRECTORIES__DATA
+              value: "/usr/src/nbgallery/data"
+            - name: GALLERY__DIRECTORIES__CACHE
+              value: "/usr/src/nbgallery/data/cache"
+            - name: GALLERY__DIRECTORIES__CHANGE_REQUESTS
+              value: "/usr/src/nbgallery/data/change_requests"
+            - name: GALLERY__DIRECTORIES__STAGING
+              value: "/usr/src/nbgallery/data/staging"
+            - name: GALLERY__DIRECTORIES__WORDCLOUDS
+              value: "/usr/src/nbgallery/data/wordclouds"
             - name: GALLERY__MYSQL__HOST
               value: {{ .Values.mysql.host }}
             - name: GALLERY__MYSQL__PORT
@@ -65,10 +75,17 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /usr/src/nbgallery/data
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName:  {{ template "nbgallery.fullname" . }}-data
     {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

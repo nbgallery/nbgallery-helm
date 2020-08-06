@@ -26,7 +26,11 @@ mysql:
 solr:
   host: nbgallery-solr-svc
   port: 8988
-
+persistence:
+  annotations: {}
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  storageClass: default
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

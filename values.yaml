@@ -72,7 +72,7 @@ persistence:
   annotations: {}
   accessMode: ReadWriteOnce
   size: 10Gi
-  storageClass: default
+  storageClass: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

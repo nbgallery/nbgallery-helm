@@ -69,6 +69,49 @@ spec:
               value: {{ .Values.email.port | quote }}
             - name: GALLERY__EMAIL__GENERAL_FROM
               value: {{ .Values.email.address | quote }}
+            - name: SECRET_KEY_BASE
+              value: {{ .Values.secretKey }}
+              {{- if .Values.admin.enabled -}}
+            - name: NBGALLERY_ADMIN_USER
+              value: {{ .Values.admin.user }}
+            - name: NBGALLERY_ADMIN_EMAIL
+              value: {{ .Values.admin.email}}
+            - name: NBGALLERY_ADMIN_PASSWORD
+              {{- if .Values.admin.existingSecret -}}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.existingSecret }}
+                  key: {{ .Values.admin.existingSecretKey }}
+              {{- else -}}
+              value: {{ .Values.admin.password}}
+              {{- end -}}
+              {{- end -}}
+            {{- if .Values.githubOauth.enabled -}}
+            - name: GITHUB_ID
+              value: {{ .Values.githubOauth.id }}
+            - name: GITHUB_SECRET
+              value: {{ .Values.githubOauth.secret }}
+            {{- end -}}
+            {{- if .Values.gitlabOauth.enabled -}}
+            - name: GITLAB_ID
+              value: {{ .Values.gitlabOauth.id }}
+            - name: GITLAB_SECRET
+              value: {{ .Values.gitlabOauth.secret }}
+            - name: GITLAB_URL
+              value: {{ .Values.gitlabOauth.url }}
+            {{- end -}}
+            {{- if .Values.googleOauth.enabled -}}
+            - name: GOOGLE_ID
+              value: {{ .Values.googleOauth.id }}
+            - name: GOOGLE_SECRET
+              value: {{ .Values.googleOauth.secret }}
+            {{- end -}}
+            {{- if .Values.facebookOauth.enabled -}}
+            - name: FACEBOOK_ID
+              value: {{ .Values.facebookOauth.id }}
+            - name: FACEBOOK_SECRET
+              value: {{ .Values.facebookOauth.secret }}
+            {{- end -}}
           ports:
             - name: gallery
               containerPort: 3000

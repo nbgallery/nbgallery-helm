@@ -12,25 +12,64 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+secretKey: ""
+
 email:
   domain:
   address:
   server:
   port:
+
+## Create an admin account
+admin:
+  enabled: false
+  user:
+  email:
+  ## If both existingSecret and password are set, existingSecret will take precedence.
+  ## If existingSecret is set, existingSecretKey must also be set
+  existingSecret:
+  existingSecretKey:
+  password:
+
+githubOauth:
+  enabled: false
+  id:
+  secret:
+
+gitlabOauth:
+  enabled: false
+  id:
+  secret:
+  url:
+
+googleOauth:
+  enabled: false
+  id:
+  secret:
+
+facebookOauth:
+  enabled: false
+  id:
+  secret:
+
 mysql:
   host: nbgallery-mysql
   port: "3306"
   user: nbgallery
   existingSecret: mysql-password
   db: gallery
+
 solr:
   host: nbgallery-solr-svc
   port: 8988
+
 persistence:
   annotations: {}
   accessMode: ReadWriteOnce
   size: 10Gi
   storageClass: default
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

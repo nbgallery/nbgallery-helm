@@ -35,23 +35,27 @@ admin:
 githubOauth:
   enabled: false
   id:
-  secret:
+  existingSecret:
+  existingSecretKey:
 
 gitlabOauth:
   enabled: false
   id:
-  secret:
+  existingSecret:
+  existingSecretKey:
   url:
 
 googleOauth:
   enabled: false
   id:
-  secret:
+  existingSecret:
+  existingSecretKey:
 
 facebookOauth:
   enabled: false
   id:
-  secret:
+  existingSecret:
+  existingSecretKey:
 
 mysql:
   host: nbgallery-mysql

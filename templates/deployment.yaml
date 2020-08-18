@@ -90,13 +90,19 @@ spec:
             - name: GITHUB_ID
               value: {{ .Values.githubOauth.id }}
             - name: GITHUB_SECRET
-              value: {{ .Values.githubOauth.secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.githubOauth.existingSecret }}
+                  key: {{ .Values.githubOauth.existingSecretKey }}
             {{- end -}}
             {{- if .Values.gitlabOauth.enabled -}}
             - name: GITLAB_ID
               value: {{ .Values.gitlabOauth.id }}
             - name: GITLAB_SECRET
-              value: {{ .Values.gitlabOauth.secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gitlabOauth.existingSecret }}
+                  key: {{ .Values.gitlabOauth.existingSecretKey }}
             - name: GITLAB_URL
               value: {{ .Values.gitlabOauth.url }}
             {{- end -}}
@@ -104,13 +110,19 @@ spec:
             - name: GOOGLE_ID
               value: {{ .Values.googleOauth.id }}
             - name: GOOGLE_SECRET
-              value: {{ .Values.googleOauth.secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.googleOauth.existingSecret }}
+                  key: {{ .Values.googleOauth.existingSecretKey }}
             {{- end -}}
             {{- if .Values.facebookOauth.enabled -}}
             - name: FACEBOOK_ID
               value: {{ .Values.facebookOauth.id }}
             - name: FACEBOOK_SECRET
-              value: {{ .Values.facebookOauth.secret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.facebookOauth.existingSecret }}
+                  key: {{ .Values.facebookOauth.existingSecretKey }}
             {{- end -}}
           ports:
             - name: gallery

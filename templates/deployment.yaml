@@ -71,22 +71,22 @@ spec:
               value: {{ .Values.email.address | quote }}
             - name: SECRET_KEY_BASE
               value: {{ .Values.secretKey }}
-              {{- if .Values.admin.enabled -}}
+              {{- if .Values.admin.enabled }}
             - name: NBGALLERY_ADMIN_USER
               value: {{ .Values.admin.user }}
             - name: NBGALLERY_ADMIN_EMAIL
               value: {{ .Values.admin.email}}
             - name: NBGALLERY_ADMIN_PASSWORD
-              {{- if .Values.admin.existingSecret -}}
+              {{- if .Values.admin.existingSecret }}
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.admin.existingSecret }}
                   key: {{ .Values.admin.existingSecretKey }}
-              {{- else -}}
+              {{- else }}
               value: {{ .Values.admin.password}}
-              {{- end -}}
-              {{- end -}}
-            {{- if .Values.githubOauth.enabled -}}
+              {{- end }}
+              {{- end }}
+            {{- if .Values.githubOauth.enabled }}
             - name: GITHUB_ID
               value: {{ .Values.githubOauth.id }}
             - name: GITHUB_SECRET
@@ -94,8 +94,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.githubOauth.existingSecret }}
                   key: {{ .Values.githubOauth.existingSecretKey }}
-            {{- end -}}
-            {{- if .Values.gitlabOauth.enabled -}}
+            {{- end }}
+            {{- if .Values.gitlabOauth.enabled }}
             - name: GITLAB_ID
               value: {{ .Values.gitlabOauth.id }}
             - name: GITLAB_SECRET
@@ -105,8 +105,8 @@ spec:
                   key: {{ .Values.gitlabOauth.existingSecretKey }}
             - name: GITLAB_URL
               value: {{ .Values.gitlabOauth.url }}
-            {{- end -}}
-            {{- if .Values.googleOauth.enabled -}}
+            {{- end }}
+            {{- if .Values.googleOauth.enabled }}
             - name: GOOGLE_ID
               value: {{ .Values.googleOauth.id }}
             - name: GOOGLE_SECRET
@@ -114,8 +114,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.googleOauth.existingSecret }}
                   key: {{ .Values.googleOauth.existingSecretKey }}
-            {{- end -}}
-            {{- if .Values.facebookOauth.enabled -}}
+            {{- end }}
+            {{- if .Values.facebookOauth.enabled }}
             - name: FACEBOOK_ID
               value: {{ .Values.facebookOauth.id }}
             - name: FACEBOOK_SECRET
@@ -123,7 +123,7 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.facebookOauth.existingSecret }}
                   key: {{ .Values.facebookOauth.existingSecretKey }}
-            {{- end -}}
+            {{- end }}
           ports:
             - name: gallery
               containerPort: 3000

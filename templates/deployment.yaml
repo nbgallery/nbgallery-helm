@@ -124,6 +124,11 @@ spec:
                   name: {{ .Values.facebookOauth.existingSecret }}
                   key: {{ .Values.facebookOauth.existingSecretKey }}
             {{- end }}
+            {{- range $key, $val := .Values.extraEnv }}
+            - name: {{ $key }}
+              value: {{ $val }}
+            {{- end }}
+
           ports:
             - name: gallery
               containerPort: 3000

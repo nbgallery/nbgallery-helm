@@ -20,6 +20,10 @@ email:
   address:
   server:
   port:
+extraEnv: {}
+  ## Example
+  # MY_VAR: "myvalue"
+  # MY_OTHER_VAR: "myothervalue"
 
 ## Create an admin account
 admin:

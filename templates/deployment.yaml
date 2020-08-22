@@ -57,18 +57,20 @@ spec:
               value: {{ .Values.solr.host }}
             - name: GALLERY__SOLR__PORT
               value: {{ .Values.solr.port | quote }}
+              {{- with .Values.email }}
             - name: EMAIL_DOMAIN
-              value: {{ .Values.email.domain | quote }}
+              value: {{ required "Email domain is required for NBGallery to work." .domain | quote }}
             - name: EMAIL_ADDRESS
-              value: {{ .Values.email.address | quote }}
+              value: {{ required "Email address is required for NBGallery to work." .address | quote }}
             - name: EMAIL_DEFAULT_URL_OPTIONS_HOST
-              value: {{ .Values.email.domain | quote }}
+              value: {{ required "Email domain is required for NBGallery to work." .domain | quote }}
             - name: EMAIL_SERVER
-              value: {{ .Values.email.server }}
+              value: {{ required "Email server is required for NBGallery to work." .server }}
             - name: EMAIL_PORT
-              value: {{ .Values.email.port | quote }}
+              value: {{ required "Email port is required for NBGallery to work." .port | quote }}
             - name: GALLERY__EMAIL__GENERAL_FROM
-              value: {{ .Values.email.address | quote }}
+              value: {{ required "Email address is required for NBGallery to work." .address | quote }}
+              {{- end }}
             - name: SECRET_KEY_BASE
               value: {{ .Values.secretKey }}
               {{- if .Values.admin.enabled }}

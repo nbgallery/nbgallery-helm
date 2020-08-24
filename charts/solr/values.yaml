@@ -32,8 +32,8 @@ terminationGracePeriodSeconds: 180
 
 # Solr image settings
 image:
-  repository: solr
-  tag: 8.5.2
+  repository: nbgallery/solr
+  tag: latest
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.

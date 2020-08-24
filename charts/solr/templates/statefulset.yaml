@@ -51,55 +51,6 @@ spec:
             secretName: {{ .Values.tls.caSecret.name }}
 {{- end }}
 {{- end }}
-        - name: configs
-          persistentVolumeClaim:
-            claimName: solr-configs
-        - name: default
-          configMap:
-            name: default
-        - name: default-conf
-          configMap:
-            name: default-conf
-        - name: default-lang
-          configMap:
-            name: default-lang
-        - name: solr
-          configMap:
-            name: solr
-      initContainers:
-        - name: "configure-pvc"
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
-          command:
-            - "sh"
-            - "-c"
-            - |
-              mkdir /tmp/configs/default
-              mkdir /tmp/configs/default/conf
-              mkdir /tmp/configs/default/lang
-              mkdir /tmp/configs/default/data
-              cp -L /tmp/solr/solr.xml /tmp/configs
-              cp -L /tmp/solr/zoo.cfg /tmp/configs
-              cp -L -r /tmp/default/core.properties /tmp/configs/default
-              cp -L -r /tmp/default/managed-schema /tmp/configs/default
-              cp -L -r /tmp/default/params.json /tmp/configs/default
-              cp -L -r /tmp/default/protwords.txt /tmp/configs/default
-              cp -L -r /tmp/default/solrconfig.xml /tmp/configs/default
-              cp -L -r /tmp/default/stopwords.txt /tmp/configs/default
-              cp -L -r /tmp/default/synonyms.txt /tmp/configs/default
-              cp -L -r /tmp/default-conf/managed-schema /tmp/configs/default/conf
-              cp -L -r /tmp/default-lang/*.txt /tmp/configs/default/lang
-          volumeMounts:
-          - name: "default"
-            mountPath: "/tmp/default"
-          - name: "default-conf"
-            mountPath: "/tmp/default-conf"
-          - name: "default-lang"
-            mountPath: "/tmp/default-lang"
-          - name: "configs"
-            mountPath: "/tmp/configs"
-          - name: "solr"
-            mountPath: "/tmp/solr"
       {{- if .Values.tls.enabled }}
         - name: "setup-keystore-and-properties"
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -201,9 +152,23 @@ spec:
               path: /solr/admin/info/system
               port: {{ .Values.port }}
           volumeMounts:
-            - name: configs
+            - name: {{ include "solr.pvc-name" . }}
               mountPath: /var/solr/data
 {{ if .Values.tls.enabled }}
             - name: "keystore-volume"
               mountPath: "/etc/ssl/keystores"
 {{ end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "solr.pvc-name" . }}
+        annotations:
+          pv.beta.kubernetes.io/gid: "8983"
+      spec:
+        accessModes:
+{{ toYaml .Values.volumeClaimTemplates.accessModes | indent 10 }}
+{{- if not ( eq .Values.volumeClaimTemplates.storageClassName  "" ) }}
+        storageClassName: "{{ .Values.volumeClaimTemplates.storageClassName }}"
+{{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.volumeClaimTemplates.storageSize }}

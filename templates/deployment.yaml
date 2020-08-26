@@ -1,0 +1,158 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nbgallery.fullname" . }}
+  labels:
+    {{- include "nbgallery.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "nbgallery.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "nbgallery.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "nbgallery.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: RAILS_SERVE_STATIC_FILES
+              value: "true"
+            - name: GALLERY__DIRECTORIES__DATA
+              value: "/usr/src/nbgallery/data"
+            - name: GALLERY__DIRECTORIES__CACHE
+              value: "/usr/src/nbgallery/data/cache"
+            - name: GALLERY__DIRECTORIES__CHANGE_REQUESTS
+              value: "/usr/src/nbgallery/data/change_requests"
+            - name: GALLERY__DIRECTORIES__STAGING
+              value: "/usr/src/nbgallery/data/staging"
+            - name: GALLERY__DIRECTORIES__WORDCLOUDS
+              value: "/usr/src/nbgallery/data/wordclouds"
+            - name: GALLERY__MYSQL__HOST
+              value: {{ .Values.mysql.host }}
+            - name: GALLERY__MYSQL__PORT
+              value: {{ .Values.mysql.port | quote }}
+            - name: GALLERY__MYSQL__USERNAME
+              value: {{ .Values.mysql.user }}
+            - name: GALLERY__MYSQL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mysql.existingSecret }}
+                  key: mysql-password
+            - name: GALLERY__MYSQL__DATABASE
+              value: {{ .Values.mysql.db }}
+            - name: GALLERY__SOLR__HOSTNAME
+              value: {{ .Values.solr.host }}
+            - name: GALLERY__SOLR__PORT
+              value: {{ .Values.solr.port | quote }}
+              {{- with .Values.email }}
+            - name: EMAIL_DOMAIN
+              value: {{ required "Email domain is required for NBGallery to work." .domain | quote }}
+            - name: EMAIL_ADDRESS
+              value: {{ required "Email address is required for NBGallery to work." .address | quote }}
+            - name: EMAIL_DEFAULT_URL_OPTIONS_HOST
+              value: {{ required "Email domain is required for NBGallery to work." .domain | quote }}
+            - name: EMAIL_SERVER
+              value: {{ required "Email server is required for NBGallery to work." .server }}
+            - name: EMAIL_PORT
+              value: {{ required "Email port is required for NBGallery to work." .port | quote }}
+            - name: GALLERY__EMAIL__GENERAL_FROM
+              value: {{ required "Email address is required for NBGallery to work." .address | quote }}
+              {{- end }}
+            - name: SECRET_KEY_BASE
+              value: {{ .Values.secretKey }}
+              {{- if .Values.admin.enabled }}
+            - name: NBGALLERY_ADMIN_USER
+              value: {{ .Values.admin.user }}
+            - name: NBGALLERY_ADMIN_EMAIL
+              value: {{ .Values.admin.email}}
+            - name: NBGALLERY_ADMIN_PASSWORD
+              {{- if .Values.admin.existingSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.admin.existingSecret }}
+                  key: {{ .Values.admin.existingSecretKey }}
+              {{- else }}
+              value: {{ .Values.admin.password}}
+              {{- end }}
+              {{- end }}
+            {{- if .Values.githubOauth.enabled }}
+            - name: GITHUB_ID
+              value: {{ .Values.githubOauth.id }}
+            - name: GITHUB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.githubOauth.existingSecret }}
+                  key: {{ .Values.githubOauth.existingSecretKey }}
+            {{- end }}
+            {{- if .Values.gitlabOauth.enabled }}
+            - name: GITLAB_ID
+              value: {{ .Values.gitlabOauth.id }}
+            - name: GITLAB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gitlabOauth.existingSecret }}
+                  key: {{ .Values.gitlabOauth.existingSecretKey }}
+            - name: GITLAB_URL
+              value: {{ .Values.gitlabOauth.url }}
+            {{- end }}
+            {{- if .Values.googleOauth.enabled }}
+            - name: GOOGLE_ID
+              value: {{ .Values.googleOauth.id }}
+            - name: GOOGLE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.googleOauth.existingSecret }}
+                  key: {{ .Values.googleOauth.existingSecretKey }}
+            {{- end }}
+            {{- if .Values.facebookOauth.enabled }}
+            - name: FACEBOOK_ID
+              value: {{ .Values.facebookOauth.id }}
+            - name: FACEBOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.facebookOauth.existingSecret }}
+                  key: {{ .Values.facebookOauth.existingSecretKey }}
+            {{- end }}
+            {{- range $key, $val := .Values.extraEnv }}
+            - name: {{ $key }}
+              value: {{ $val }}
+            {{- end }}
+
+          ports:
+            - name: gallery
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /usr/src/nbgallery/data
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName:  {{ template "nbgallery.fullname" . }}-data
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

@@ -1,0 +1,140 @@
+# Default values for nbgallery.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nbgallery/nbgallery
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+secretKey: ""
+
+email:
+  domain:
+  address:
+  server:
+  port:
+extraEnv: {}
+  ## Example
+  # MY_VAR: "myvalue"
+  # MY_OTHER_VAR: "myothervalue"
+
+## Create an admin account
+admin:
+  enabled: false
+  user:
+  email:
+  ## If both existingSecret and password are set, existingSecret will take precedence.
+  ## If existingSecret is set, existingSecretKey must also be set
+  existingSecret:
+  existingSecretKey:
+  password:
+
+githubOauth:
+  enabled: false
+  id:
+  existingSecret:
+  existingSecretKey:
+
+gitlabOauth:
+  enabled: false
+  id:
+  existingSecret:
+  existingSecretKey:
+  url:
+
+googleOauth:
+  enabled: false
+  id:
+  existingSecret:
+  existingSecretKey:
+
+facebookOauth:
+  enabled: false
+  id:
+  existingSecret:
+  existingSecretKey:
+
+mysql:
+  host: nbgallery-mysql
+  port: "3306"
+  user: nbgallery
+  existingSecret: mysql-password
+  db: gallery
+
+solr:
+  host: nbgallery-solr-svc
+  port: 8988
+
+persistence:
+  annotations: {}
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  storageClass: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3000
+  annotations:
+    ## enable load balancer service for your kubernetes provider
+    # cloud.google.com/load-balancer-type: "Internal"
+    # service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "false"
+  hosts:
+    # - host: nbgallery.example.com
+    #   paths:
+    #     - "/"
+  tls:
+    # - secretName: nbgallery-tls
+    #   hosts:
+    #     - nbgallery.example.com
+
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -49,7 +49,11 @@ spec:
             - name: GALLERY__MYSQL__PASSWORD
               valueFrom:
                 secretKeyRef:
+                  {{- if .Values.mysql.existingSecret }}
                   name: {{ .Values.mysql.existingSecret }}
+                  {{- else }}
+                  name: {{ template "mysql.fullname" .Subcharts.mysql }}
+                  {{- end }}
                   key: mysql-password
             - name: GALLERY__MYSQL__DATABASE
               value: {{ .Values.mysql.db }}
@@ -140,6 +144,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /usr/src/nbgallery/data
+          {{- if .Values.extraVolumeMounts }}
+{{ tpl (toYaml .Values.extraVolumeMounts) . | indent 12 }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -148,6 +155,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName:  {{ template "nbgallery.fullname" . }}-data
+      {{- if .Values.extraVolumes }}
+{{ tpl (toYaml .Values.extraVolumes) . | indent 8 }}
+      {{- end }}
     {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

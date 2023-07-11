@@ -1,0 +1,13 @@
+{{- range $configMapName, $configMapContent := .Values.extraConfigMaps }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ tpl $configMapName $ | quote }}
+{{- if $configMapContent.data }}
+data:
+{{- with $configMapContent.data }}
+  {{- tpl (toYaml .) $ | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}

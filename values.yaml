@@ -65,7 +65,7 @@ mysql:
   host: nbgallery-mysql
   port: "3306"
   user: nbgallery
-  existingSecret: mysql-password
+  existingSecret: ''
   db: gallery
 
 solr:
@@ -139,3 +139,24 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Extra volumes to be mounted to the main container. Can be used to override nbgallery settings files
+extraVolumes: []
+#  - name: nbgallery-settings-overrides
+#    configMap:
+#      name: nbgallery-settings-overrides
+
+extraVolumeMounts: []
+#  - mountPath: /usr/src/nbgallery/config/settings/
+#    name: nbgallery-settings-overrides
+#    readOnly: true
+
+extraConfigMaps: {}
+#  nbgallery-settings-overrides:
+#    data:
+#      production.yml: |-
+#        search:
+#          federated:
+#            - url: baseurl of other gallery
+#              name: Name of other gallery
+#              tagline: tagline/subtitle for other gallery

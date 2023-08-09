@@ -108,9 +108,6 @@ service:
     # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 ingress:
   enabled: false
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "false"
   hosts:
   # - host: nbgallery.example.com
   #   paths:
